@@ -1,10 +1,8 @@
-import type { ComponentType } from 'react'
-
 export type MetricCard = {
   title: string
   value: string
   delta: string
-  icon: ComponentType<{ className?: string }>
+  icon: string
   iconTone: string
 }
 
@@ -74,5 +72,11 @@ export type DashboardData = {
     tone: string
   }>
   provinces: string[]
+  sourceInfo: {
+    sourceLabel: string
+    sourceValue: string
+    dateLabel: string
+    dateValue: string
+  }
   sidebarMenu: SidebarMenuGroup[]
 }

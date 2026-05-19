@@ -1,3 +1,7 @@
+'use client'
+
+import { useState } from 'react'
+import ProvinceMapOl from './ProvinceMapOl'
 import type { DashboardData } from './types'
 
 type ExtendedSectionsProps = {
@@ -5,6 +9,7 @@ type ExtendedSectionsProps = {
 }
 
 export default function ExtendedSections({ data }: ExtendedSectionsProps) {
+  const [selectedProvince, setSelectedProvince] = useState(data.provinces[0] ?? 'Semua Provinsi')
   const trendMax = Math.max(...data.trend.map((item) => item.value))
 
   return (
@@ -30,19 +35,27 @@ export default function ExtendedSections({ data }: ExtendedSectionsProps) {
         </article>
 
         <article className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm xl:col-span-2">
+          <h3 className="text-base font-semibold text-slate-900">Ringkasan Distribusi Bintang</h3>
+          <p className="mt-1 text-xs text-slate-500">Komposisi capaian bintang kampus pada periode aktif.</p>
+        </article>
+      </div>
+
+      <div className="mt-4">
+        <article className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-base font-semibold text-slate-900">Sebaran Kampus Sehat per Provinsi</h3>
-            <select className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-600">
+            <select
+              value={selectedProvince}
+              onChange={(e) => setSelectedProvince(e.target.value)}
+              className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-600"
+            >
               {data.provinces.map((province) => (
                 <option key={province}>{province}</option>
               ))}
             </select>
           </div>
-          <div className="grid min-h-[190px] place-items-center rounded-xl border border-dashed border-teal-200 bg-gradient-to-br from-teal-50 to-cyan-50 text-center">
-            <div>
-              <p className="text-sm font-semibold text-teal-700">Peta Indonesia (Statis)</p>
-              <p className="mt-1 text-xs text-slate-500">Placeholder map, siap diganti map interaktif di tahap berikutnya.</p>
-            </div>
+          <div className="h-[440px] overflow-hidden rounded-xl border border-dashed border-teal-200 bg-[#e6f5f3]">
+            <ProvinceMapOl selectedProvince={selectedProvince} />
           </div>
         </article>
       </div>

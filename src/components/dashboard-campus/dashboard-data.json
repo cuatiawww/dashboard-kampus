@@ -7,7 +7,7 @@
     { "title": "Total Perguruan Tinggi", "value": "4.663", "delta": "+128 dari tahun lalu", "iconKey": "school", "iconTone": "text-teal-700 bg-teal-100" },
     { "title": "Sudah Submit Penilaian", "value": "3.125 (67,05%)", "delta": "+215 dari periode lalu", "iconKey": "submit", "iconTone": "text-sky-700 bg-sky-100" },
     { "title": "Sudah Diverifikasi", "value": "2.456 (78,61%)", "delta": "+180 dari periode lalu", "iconKey": "verify", "iconTone": "text-violet-700 bg-violet-100" },
-    { "title": "Sudah Visitasi", "value": "1.842 (59,32%)", "delta": "+142 dari periode lalu", "iconKey": "visit", "iconTone": "text-amber-700 bg-amber-100" },
+    { "title": "Sudah Visitasi", "value": "1.842 (59,32%)", "delta": "+142 dari periode lalu", "iconKey": "visit", "iconTone": "text-amber-700 bg-violet-100" },
     { "title": "Sudah Dapat Apresiasi", "value": "1.218 (26,14%)", "delta": "+110 dari periode lalu", "iconKey": "award", "iconTone": "text-yellow-700 bg-yellow-100" }
   ],
   "summary": {
@@ -66,6 +66,12 @@
     { "text": "Masa berlaku apresiasi akan berakhir (<6 bln)", "total": 145, "tone": "bg-amber-500" }
   ],
   "provinces": ["Semua Provinsi", "DKI Jakarta", "Jawa Barat", "Jawa Tengah", "Jawa Timur", "Bali", "Sumatera Utara"],
+  "sourceInfo": {
+    "sourceLabel": "Sumber Data",
+    "sourceValue": "Kementerian Kesehatan Republik Indonesia",
+    "dateLabel": "Data per",
+    "dateValue": "19 Mei 2026 12.45 WIB"
+  },
   "sidebarMenu": [
     {
       "title": "Monitoring",
