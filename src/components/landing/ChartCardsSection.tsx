@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 type ChartInstance = { destroy: () => void; update: (mode?: string) => void }
+type ChartConstructor = new (canvas: HTMLCanvasElement, config: any) => ChartInstance
 type FacilityFilter = 'rumah-sakit' | 'puskesmas' | 'pustu' | 'klinik' | 'posyandu' | 'bbkk'
 type RekapTotals = {
   total_rs?: string | number
@@ -13,11 +14,9 @@ type RekapTotals = {
   total_bkk?: string | number
 } | null
 
-declare global {
-  interface Window {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    Chart: new (canvas: HTMLCanvasElement, config: any) => ChartInstance
-  }
+function getChartConstructor(): ChartConstructor | null {
+  if (typeof window === 'undefined') return null
+  return (window as Window & { Chart?: ChartConstructor }).Chart ?? null
 }
 
 const FASKES_META = [
@@ -181,10 +180,11 @@ function RingkasanFaskesCard({
   }
 
   const buildChart = () => {
-    if (!canvasRef.current || !window.Chart) return
+    const ChartCtor = getChartConstructor()
+    if (!canvasRef.current || !ChartCtor) return
     chartRef.current?.destroy()
 
-    chartRef.current = new window.Chart(canvasRef.current, {
+    chartRef.current = new ChartCtor(canvasRef.current, {
       type: 'doughnut',
       data: {
         labels: filteredData.map((item) => item.label),
@@ -239,7 +239,7 @@ function RingkasanFaskesCard({
 
   useChartJs(buildChart)
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.Chart) {
+    if (getChartConstructor()) {
       buildChart()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -339,7 +339,8 @@ function SebaranJenisFaskesCard({
   const isAllActive = selectedIds.length === FASKES_META.length
 
   const buildChart = () => {
-    if (!canvasRef.current || !window.Chart) return
+    const ChartCtor = getChartConstructor()
+    if (!canvasRef.current || !ChartCtor) return
     chartRef.current?.destroy()
     const isMobile = window.innerWidth < 640
 
@@ -376,7 +377,7 @@ function SebaranJenisFaskesCard({
       },
     }
 
-    chartRef.current = new window.Chart(canvasRef.current, {
+    chartRef.current = new ChartCtor(canvasRef.current, {
       type: 'bar',
       data: {
         labels: filteredData.map((item) =>
@@ -453,7 +454,7 @@ function SebaranJenisFaskesCard({
 
   useChartJs(buildChart)
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.Chart) {
+    if (getChartConstructor()) {
       buildChart()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

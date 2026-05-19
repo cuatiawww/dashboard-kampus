@@ -3,12 +3,11 @@
 import { useEffect, useRef, useState } from 'react'
 
 type ChartInstance = { destroy: () => void }
+type ChartConstructor = new (canvas: HTMLCanvasElement, config: any) => ChartInstance
 
-declare global {
-  interface Window {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    Chart: new (canvas: HTMLCanvasElement, config: any) => ChartInstance
-  }
+function getChartConstructor(): ChartConstructor | null {
+  if (typeof window === 'undefined') return null
+  return (window as Window & { Chart?: ChartConstructor }).Chart ?? null
 }
 
 let chartJsLoaded = false
@@ -202,10 +201,11 @@ function DliStatusCard() {
   }
 
   const buildChart = () => {
-    if (!canvasRef.current || !window.Chart) return
+    const ChartCtor = getChartConstructor()
+    if (!canvasRef.current || !ChartCtor) return
     chartRef.current?.destroy()
 
-    chartRef.current = new window.Chart(canvasRef.current, {
+    chartRef.current = new ChartCtor(canvasRef.current, {
       type: 'doughnut',
       data: {
         labels: DLI_DATA.map(d => d.label),
@@ -322,9 +322,10 @@ function CapaianProvinsiCard() {
   }
 
   useChartJs(() => {
-    if (!canvasRef.current || !window.Chart) return
+    const ChartCtor = getChartConstructor()
+    if (!canvasRef.current || !ChartCtor) return
     chartRef.current?.destroy()
-    chartRef.current = new window.Chart(canvasRef.current, {
+    chartRef.current = new ChartCtor(canvasRef.current, {
       type: 'bar',
       data: {
         labels: ['Jawa Barat', 'Jawa Tengah', 'Jawa Timur'],
@@ -411,9 +412,10 @@ function TopGapAlatCard() {
   const chartRef = useRef<ChartInstance | null>(null)
 
   useChartJs(() => {
-    if (!canvasRef.current || !window.Chart) return
+    const ChartCtor = getChartConstructor()
+    if (!canvasRef.current || !ChartCtor) return
     chartRef.current?.destroy()
-    chartRef.current = new window.Chart(canvasRef.current, {
+    chartRef.current = new ChartCtor(canvasRef.current, {
       type: 'bar',
       data: {
         labels: ['Timbangan Bayi', 'Infant Warmer', 'HB Meter', 'Stadiometer', 'Nebulizer'],
@@ -493,9 +495,10 @@ function KesiapanLayananCard() {
   const chartRef = useRef<ChartInstance | null>(null)
 
   useChartJs(() => {
-    if (!canvasRef.current || !window.Chart) return
+    const ChartCtor = getChartConstructor()
+    if (!canvasRef.current || !ChartCtor) return
     chartRef.current?.destroy()
-    chartRef.current = new window.Chart(canvasRef.current, {
+    chartRef.current = new ChartCtor(canvasRef.current, {
       type: 'radar',
       data: {
         labels: RADAR_DATA.map(d => d.label),
