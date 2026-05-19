@@ -66,7 +66,6 @@ export default function ScoreSection({ aspectScores, starDistribution, trend }: 
                     outerRadius={62}
                     paddingAngle={2}
                     activeIndex={activePieIndex ?? -1}
-                    activeShape={{ outerRadius: 68 }}
                     animationDuration={550}
                     onMouseEnter={(_, index) => setActivePieIndex(index)}
                     onMouseLeave={() => setActivePieIndex(null)}
