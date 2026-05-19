@@ -77,7 +77,9 @@ export default function ProvinceMapOl({ selectedProvince }: ProvinceMapOlProps) 
         vectorSource.addFeatures(features)
         if (features.length > 0) {
           const extent = vectorSource.getExtent()
-          map.getView().fit(extent, { padding: [25, 25, 25, 25], duration: 400, maxZoom: 6.2 })
+          if (extent) {
+            map.getView().fit(extent, { padding: [25, 25, 25, 25], duration: 400, maxZoom: 6.2 })
+          }
         }
       })
       .catch(() => {
@@ -122,4 +124,3 @@ export default function ProvinceMapOl({ selectedProvince }: ProvinceMapOlProps) 
 
   return <div ref={mapRef} className="h-full w-full rounded-xl" />
 }
-
