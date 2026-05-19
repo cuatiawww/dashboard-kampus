@@ -1,0 +1,78 @@
+import type { ComponentType } from 'react'
+
+export type MetricCard = {
+  title: string
+  value: string
+  delta: string
+  icon: ComponentType<{ className?: string }>
+  iconTone: string
+}
+
+export type SidebarMenuGroup = {
+  title: string
+  items: Array<{
+    label: string
+    iconKey: string
+    active?: boolean
+  }>
+}
+
+export type AspectScore = {
+  label: string
+  value: number
+  tone: string
+}
+
+export type DashboardData = {
+  greeting: {
+    title: string
+    subtitle: string
+  }
+  metrics: Array<{
+    title: string
+    value: string
+    delta: string
+    iconKey: string
+    iconTone: string
+  }>
+  summary: {
+    average: string
+    category: string
+    delta: string
+  }
+  aspectScores: AspectScore[]
+  starDistribution: Array<{
+    label: string
+    total: number
+    percent: number
+    tone: string
+  }>
+  trend: Array<{
+    year: string
+    value: number
+  }>
+  topCampuses: Array<{
+    name: string
+    stars: number
+    score: string
+  }>
+  processStatus: Array<{
+    stage: string
+    total: string
+    percent: string
+    tone: string
+  }>
+  lowestAspects: Array<{
+    name: string
+    score: number
+    percent: number
+    tone: string
+  }>
+  notifications: Array<{
+    text: string
+    total: number
+    tone: string
+  }>
+  provinces: string[]
+  sidebarMenu: SidebarMenuGroup[]
+}
