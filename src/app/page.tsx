@@ -54,6 +54,7 @@ import {
 } from 'lucide-react'
 import rawData from '@/components/dashboard-campus/dashboard-data.json'
 import ProvinceMapOlComponent from '@/components/dashboard-campus/ProvinceMapOl'
+import FacilityProvinceSection from '@/components/landing-backup/FacilityProvinceSection'
 
 type MetricCard = {
   title: string
@@ -1507,6 +1508,9 @@ export default function HomePage() {
         <ScoreSection aspectScores={dashboardData.aspectScores} starDistribution={dashboardData.starDistribution} trend={dashboardData.trend} />
         <DecisionSupportSystemIntro />
         <AnalyticsSection />
+        <section className="px-4 pb-8 md:px-6">
+          <FacilityProvinceSection />
+        </section>
       </div>
     </main>
   )

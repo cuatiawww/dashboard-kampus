@@ -2,37 +2,43 @@
 
 import { useState, useRef, useEffect, type ComponentType } from 'react'
 import Link from 'next/link'
-import { Building2, HeartPulse, Stethoscope } from 'lucide-react'
+import { Star } from 'lucide-react'
 
-export type FacilityKey = 'rumahSakit' | 'puskesmas' | 'posyandu'
+export type FacilityKey = 'bintang1' | 'bintang2' | 'bintang3' | 'bintang4' | 'bintang5'
 type FacilityFocus = FacilityKey | 'all'
 
 type ProvinceRow = {
   name: string
-  rumahSakit: number
-  puskesmas: number
-  posyandu: number
+  bintang1: number
+  bintang2: number
+  bintang3: number
+  bintang4: number
+  bintang5: number
 }
 
 const rows: ProvinceRow[] = [
-  { name: 'DKI Jakarta', rumahSakit: 52, puskesmas: 26, posyandu: 89 },
-  { name: 'Jawa Barat',  rumahSakit: 82, puskesmas: 16, posyandu: 79 },
-  { name: 'Jawa Tengah', rumahSakit: 42, puskesmas: 24, posyandu: 91 },
-  { name: 'Jawa Timur',  rumahSakit: 54, puskesmas: 26, posyandu: 76 },
-  { name: 'Banten',      rumahSakit: 33, puskesmas: 30, posyandu: 75 },
+  { name: 'Kepulauan Riau', bintang1: 6, bintang2: 10, bintang3: 18, bintang4: 12, bintang5: 4 },
+  { name: 'DKI Jakarta', bintang1: 3, bintang2: 7, bintang3: 20, bintang4: 19, bintang5: 8 },
+  { name: 'Jawa Barat', bintang1: 12, bintang2: 26, bintang3: 33, bintang4: 22, bintang5: 9 },
+  { name: 'Jawa Tengah', bintang1: 11, bintang2: 23, bintang3: 29, bintang4: 20, bintang5: 7 },
+  { name: 'Jawa Timur', bintang1: 9, bintang2: 19, bintang3: 28, bintang4: 24, bintang5: 10 },
 ]
 
-const FACILITY_KEYS: FacilityKey[] = ['rumahSakit', 'puskesmas', 'posyandu']
+const FACILITY_KEYS: FacilityKey[] = ['bintang1', 'bintang2', 'bintang3', 'bintang4', 'bintang5']
 
 const FACILITY_META: Record<FacilityKey, { label: string; color: string }> = {
-  rumahSakit: { label: 'Rumah Sakit', color: '#2db9bb' },
-  puskesmas:  { label: 'Puskesmas',   color: '#0b7b86' },
-  posyandu:   { label: 'Posyandu',    color: '#5c9bd5' },
+  bintang1: { label: 'Bintang 1', color: '#ef4444' },
+  bintang2: { label: 'Bintang 2', color: '#f97316' },
+  bintang3: { label: 'Bintang 3', color: '#f59e0b' },
+  bintang4: { label: 'Bintang 4', color: '#14b8a6' },
+  bintang5: { label: 'Bintang 5', color: '#0ea5e9' },
 }
 const FACILITY_ICON: Record<FacilityKey, ComponentType<{ className?: string }>> = {
-  rumahSakit: Building2,
-  puskesmas: Stethoscope,
-  posyandu: HeartPulse,
+  bintang1: Star,
+  bintang2: Star,
+  bintang3: Star,
+  bintang4: Star,
+  bintang5: Star,
 }
 
 type TooltipState = {
@@ -54,7 +60,7 @@ export default function FacilityProvinceSection({
     activeFacility === 'all' ? new Set(FACILITY_KEYS) : new Set([activeFacility])
   )
   const [tooltip, setTooltip] = useState<TooltipState>({
-    visible: false, x: 0, y: 0, province: '', key: 'rumahSakit', value: 0, pct: 0,
+    visible: false, x: 0, y: 0, province: '', key: 'bintang3', value: 0, pct: 0,
   })
   const [panel, setPanel] = useState<{ visible: boolean; province: ProvinceRow | null }>({
     visible: false, province: null,
@@ -68,8 +74,15 @@ export default function FacilityProvinceSection({
         setPanel({ visible: false, province: null })
       }
     }
+    function handleEscape(e: KeyboardEvent) {
+      if (e.key === 'Escape') setPanel({ visible: false, province: null })
+    }
     if (panel.visible) document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
+    if (panel.visible) document.addEventListener('keydown', handleEscape)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keydown', handleEscape)
+    }
   }, [panel.visible])
 
   function toggleKey(key: FacilityKey) {
@@ -85,6 +98,9 @@ export default function FacilityProvinceSection({
   }
 
   const allActive = activeKeys.size === FACILITY_KEYS.length
+  const totalCampusNasional = rows.reduce((sum, row) => (
+    sum + FACILITY_KEYS.reduce((subtotal, key) => subtotal + row[key], 0)
+  ), 0)
 
   // Max total among all rows for currently active keys — determines longest bar
   const maxVisTotal = Math.max(
@@ -116,20 +132,24 @@ export default function FacilityProvinceSection({
 
         {/* Detail modal */}
         {panel.visible && panel.province && (
-          <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/20 backdrop-blur-[2px]">
+          <div
+            className="fixed inset-0 z-40 flex items-center justify-center bg-[#0f172a]/25 backdrop-blur-[2px]"
+            onClick={() => setPanel({ visible: false, province: null })}
+          >
             <div
               ref={panelRef}
-              className="mx-4 w-full max-w-sm rounded-[22px] border border-[#d7eaea] bg-white p-6 shadow-2xl"
+              className="mx-4 w-full max-w-sm rounded-[24px] border border-[#d7eaea] bg-white p-6 shadow-[0_30px_80px_rgba(15,23,42,0.22)]"
               style={{ animation: 'panelIn 0.28s cubic-bezier(0.34,1.56,0.64,1) both' }}
+              onClick={e => e.stopPropagation()}
             >
               <div className="mb-5 flex items-center justify-between">
                 <div>
-                  <p className="text-[11px] uppercase tracking-wider text-[#8aabab]">Total Fasilitas</p>
+                  <p className="text-[11px] uppercase tracking-wider text-[#8aabab]">Total Penilaian</p>
                   <h4 className="text-[22px] font-bold text-[#2f2f2f]">{panel.province.name}</h4>
                 </div>
                 <button
                   onClick={() => setPanel({ visible: false, province: null })}
-                  className="flex h-8 w-8 items-center justify-center rounded-full bg-[#eff7f7] text-[#3a5050] transition hover:bg-[#d7eaea]"
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-[#eff7f7] text-[#3a5050] transition hover:bg-[#d7eaea]"
                   aria-label="Tutup"
                 >
                   ✕
@@ -142,7 +162,7 @@ export default function FacilityProvinceSection({
                   <p className="text-[40px] font-bold leading-none text-[#0b7b86]">
                     {FACILITY_KEYS.reduce((s, k) => s + panel.province![k], 0)}
                   </p>
-                  <p className="text-[12px] text-[#8aabab]">fasilitas kesehatan</p>
+                  <p className="text-[12px] text-[#8aabab]">kampus dinilai</p>
                 </div>
               </div>
 
@@ -191,10 +211,13 @@ export default function FacilityProvinceSection({
           <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
             <div>
               <h3 className="text-[20px] font-bold uppercase leading-tight text-[#2f2f2f] sm:text-[24px]">
-                Sebaran Fasilitas Kesehatan per Provinsi
+                Sebaran Penilaian Kampus Sehat Per Provinsi
               </h3>
               <p className="mt-1 text-[13px] leading-relaxed text-[#4b4b4b] sm:text-[14px]">
-               Menampilkan pemetaan distribusi dan jumlah fasilitas kesehatan yang tersebar di setiap provinsi.
+                Menampilkan distribusi hasil penilaian Kampus Sehat berdasarkan kategori Bintang 1 sampai Bintang 5 untuk setiap provinsi.
+              </p>
+              <p className="mt-2 inline-flex rounded-full bg-[#e8f6f8] px-3 py-1 text-[12px] font-semibold text-[#0b7b86]">
+                Total kampus dinilai: {totalCampusNasional}
               </p>
 
             </div>
@@ -281,7 +304,10 @@ export default function FacilityProvinceSection({
                             }}
                             onMouseMove={e => { e.stopPropagation(); setTooltip(p => ({ ...p, x: e.clientX, y: e.clientY })) }}
                             onMouseLeave={e => { e.stopPropagation(); setTooltip(p => ({ ...p, visible: false })) }}
-                            onClick={e => e.stopPropagation()}
+                            onClick={e => {
+                              e.stopPropagation()
+                              setPanel({ visible: true, province: row })
+                            }}
                           >
                             {segPct > 12 ? row[k] : ''}
                           </div>
@@ -304,7 +330,7 @@ export default function FacilityProvinceSection({
 
           <div className="mt-5 flex justify-end">
             <Link href="#" className="text-[14px] text-[#3a4040] underline underline-offset-4 hover:text-[#0f8f96]">
-              Selengkapnya
+              Lihat detail penilaian
             </Link>
           </div>
         </article>
