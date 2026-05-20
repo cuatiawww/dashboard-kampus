@@ -791,6 +791,9 @@ function ProvinceMapOl({ selectedProvince }: { selectedProvince: string }) {
 }
 
 function AiRecommendationModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [openSection, setOpenSection] = useState<string>('GAP ANALISIS NASIONAL')
+  const [openInstitution, setOpenInstitution] = useState<string>('Kementerian Kesehatan')
+
   if (!open) return null
 
   return (
@@ -834,36 +837,67 @@ function AiRecommendationModal({ open, onClose }: { open: boolean; onClose: () =
 
         <div className="space-y-4 overflow-y-auto px-5 py-5 md:px-6">
           {aiRecommendationSections.map((section, index) => (
-            <article key={section.eyebrow} className="rounded-2xl border border-[#d3e9e8] bg-white p-4 shadow-sm">
-              <div className="flex items-start gap-3">
+            <article key={section.eyebrow} className="rounded-2xl border border-[#d3e9e8] bg-white shadow-sm">
+              <button
+                type="button"
+                onClick={() => setOpenSection((prev) => (prev === section.eyebrow ? '' : section.eyebrow))}
+                className="flex w-full items-start gap-3 p-4 text-left"
+                aria-expanded={openSection === section.eyebrow}
+              >
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#e3f5f4] text-[#0f8f96]">
                   {index === 0 ? <TrendingUp className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />}
                 </div>
-                <div>
+                <div className="flex-1">
                   <p className="text-sm font-extrabold uppercase tracking-[0.08em] text-[#0f8f96] md:text-base">{section.eyebrow}</p>
-                  <h3 className="mt-2 text-lg font-bold leading-snug text-[#183838] md:text-xl">{section.title}</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-[#4c6b6b]">{section.body}</p>
                 </div>
-              </div>
+                <ChevronDown className={`mt-1 h-4 w-4 shrink-0 text-[#5f8080] transition ${openSection === section.eyebrow ? 'rotate-180' : ''}`} />
+              </button>
+              {openSection === section.eyebrow ? (
+                <div className="px-4 pb-4">
+                  <p className="text-sm leading-relaxed text-[#4c6b6b]">{section.body}</p>
+                </div>
+              ) : null}
             </article>
           ))}
 
-          <article className="rounded-2xl border border-[#d3e9e8] bg-white p-4 shadow-sm">
-            <div className="mb-3 flex items-center gap-2">
-              <ShieldCheck className="h-4 w-4 text-[#0f8f96]" />
-              <p className="text-sm font-extrabold uppercase tracking-[0.08em] text-[#0f8f96] md:text-base">REKOMENDASI</p>
-            </div>
-            <div className="space-y-3">
-              {aiInstitutionRecommendations.map((item) => (
-                <div key={item.label} className="rounded-xl border border-[#e0eeee] bg-[#f8fdfd] p-3">
-                  <div className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-emerald-600" />
-                    <h4 className="text-base font-bold text-[#183838]">{item.label}</h4>
-                  </div>
-                  <p className="mt-2 text-sm leading-relaxed text-[#4c6b6b]">{item.text}</p>
+          <article className="rounded-2xl border border-[#d3e9e8] bg-white shadow-sm">
+            <button
+              type="button"
+              onClick={() => setOpenSection((prev) => (prev === 'REKOMENDASI' ? '' : 'REKOMENDASI'))}
+              className="mb-1 flex w-full items-center justify-between gap-2 p-4 text-left"
+              aria-expanded={openSection === 'REKOMENDASI'}
+            >
+              <div className="flex items-center gap-2">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#e3f5f4] text-[#0f8f96]">
+                  <ShieldCheck className="h-4 w-4" />
                 </div>
-              ))}
-            </div>
+                <p className="text-sm font-extrabold uppercase tracking-[0.08em] text-[#0f8f96] md:text-base">REKOMENDASI</p>
+              </div>
+              <ChevronDown className={`h-4 w-4 shrink-0 text-[#5f8080] transition ${openSection === 'REKOMENDASI' ? 'rotate-180' : ''}`} />
+            </button>
+            {openSection === 'REKOMENDASI' ? (
+              <div className="space-y-3 px-4 pb-4">
+                {aiInstitutionRecommendations.map((item) => (
+                  <div key={item.label} className="rounded-xl border border-[#e0eeee] bg-[#f8fdfd]">
+                    <button
+                      type="button"
+                      onClick={() => setOpenInstitution((prev) => (prev === item.label ? '' : item.label))}
+                      className="flex w-full items-center justify-between gap-2 p-3 text-left"
+                      aria-expanded={openInstitution === item.label}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Check className="h-4 w-4 text-emerald-600" />
+                        <h4 className="text-base font-bold text-[#183838]">{item.label}</h4>
+                      </div>
+                      <ChevronDown className={`h-4 w-4 shrink-0 text-[#5f8080] transition ${openInstitution === item.label ? 'rotate-180' : ''}`} />
+                    </button>
+                    {openInstitution === item.label ? (
+                      <p className="px-3 pb-3 text-sm leading-relaxed text-[#4c6b6b]">{item.text}</p>
+                    ) : null}
+                  </div>
+                ))}
+              </div>
+            ) : null}
           </article>
         </div>
       </div>
