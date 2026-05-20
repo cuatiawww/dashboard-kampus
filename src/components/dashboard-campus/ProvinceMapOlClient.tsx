@@ -41,6 +41,23 @@ type PetaSebaranItem = {
   properties?: PetaSebaranItem
 }
 
+// ── Papua / Irian Jaya name override map ─────────────────────────────────────
+// GeoJSON lama masih memakai nama "Irian Jaya …". Mapping ini memaksa tampil
+// nama Papua yang berlaku sesuai pemekaran 2022.
+
+const PROVINCE_NAME_OVERRIDE: Record<string, string> = {
+  // Nama-nama lama → nama resmi sekarang
+  'IRIAN JAYA TIMUR':          'PAPUA',
+  'IRIAN JAYA':                'PAPUA',
+  'IRIAN JAYA BARAT':          'PAPUA BARAT',
+  'IRIAN JAYA TENGAH':         'PAPUA TENGAH',
+  'IRIAN JAYA PEGUNUNGAN':     'PAPUA PEGUNUNGAN',
+  'PAPUA SELATAN BARAT':       'PAPUA BARAT DAYA',
+  // Variasi penulisan lain yang mungkin ada di GeoJSON
+  'IRJABAR':                   'PAPUA BARAT',
+  'IRJATIM':                   'PAPUA',
+}
+
 // ── Choropleth ──────────────────────────────────────────────────────────────
 
 function scoreFill(s: number) {
@@ -74,7 +91,11 @@ function scoreCategory(s: number) {
 function extractName(props: Record<string, unknown>): string {
   for (const key of ['name', 'NAME_1', 'Propinsi', 'propinsi', 'PROPINSI', 'PROVINSI', 'province', 'WADMPR']) {
     const v = props[key]
-    if (typeof v === 'string' && v.trim()) return v.trim()
+    if (typeof v === 'string' && v.trim()) {
+      const raw = v.trim().toUpperCase()
+      // Gunakan nama override jika ada, jika tidak kembalikan nama asli
+      return PROVINCE_NAME_OVERRIDE[raw] ?? v.trim()
+    }
   }
   const code = props.kode
   if (typeof code === 'string' && code.trim()) return `Wilayah ${code.trim()}`
@@ -223,7 +244,7 @@ export default function ProvinceMapOl({ selectedProvince }: ProvinceMapOlProps) 
     })
     mapRef.current = map
 
-    // CLICK — key fix: collect features array, take first, then zoom
+    // CLICK — collect features array, take first, then zoom
     const clickKey = map.on('singleclick', (evt) => {
       if (!loadedRef.current) return
 
@@ -265,7 +286,7 @@ export default function ProvinceMapOl({ selectedProvince }: ProvinceMapOlProps) 
       setDetail(mergedDetail)
       restyle(pname.toLowerCase(), selRef.current)
 
-      // Zoom to province — need cast to access getGeometry
+      // Zoom to province
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const geom = (f as any).getGeometry?.()
       if (geom) {
@@ -296,9 +317,11 @@ export default function ProvinceMapOl({ selectedProvince }: ProvinceMapOlProps) 
         const nextMap: Record<string, number> = {}
         for (const row of rows) {
           const source = row.properties ?? row
-          const name = String(source.nama ?? source.nama_provinsi ?? '').trim()
-          if (!name) continue
-          const key = normalizeProvinceName(name)
+          const rawName = String(source.nama ?? source.nama_provinsi ?? '').trim()
+          if (!rawName) continue
+          // Terapkan override nama Papua juga untuk data dari API
+          const overridden = PROVINCE_NAME_OVERRIDE[rawName.toUpperCase()] ?? rawName
+          const key = normalizeProvinceName(overridden)
           nextMap[key] = (nextMap[key] ?? 0) + totalFaskes(source)
         }
         if (Object.keys(nextMap).length > 0) {
