@@ -101,6 +101,13 @@ type ProvinceMapDetail = {
   recommendation: string
 }
 
+type PtCategoryItem = {
+  label: string
+  total: number
+  description: string
+  color: string
+}
+
 const dashboardData = rawData as DashboardData
 
 const outlineActionButtonClass =
@@ -174,6 +181,45 @@ const aiInstitutionRecommendations = [
     label: 'Kemendikti / Kemendiktisaintek',
     text:
       'Kemendikti perlu mendorong seluruh perguruan tinggi mengadopsi Kampus Sehat sebagai bagian dari tata kelola mutu pendidikan tinggi, bukan sebagai kegiatan tambahan. Setiap kampus perlu diarahkan memiliki SK atau tim pelaksana, rencana kerja, dukungan anggaran, integrasi tridharma, survei mandiri, dan pelaporan berkala yang dapat diverifikasi.',
+  },
+]
+
+const ptCategoryBreakdown: PtCategoryItem[] = [
+  {
+    label: 'Universitas',
+    total: 1284,
+    description: 'Pendidikan akademik dan vokasi lintas rumpun ilmu.',
+    color: '#ef4444',
+  },
+  {
+    label: 'Institut',
+    total: 532,
+    description: 'Pendidikan akademik dan vokasi pada rumpun tertentu.',
+    color: '#f97316',
+  },
+  {
+    label: 'Sekolah Tinggi',
+    total: 1748,
+    description: 'Pendidikan akademik dan vokasi pada satu rumpun ilmu.',
+    color: '#f59e0b',
+  },
+  {
+    label: 'Politeknik',
+    total: 623,
+    description: 'Pendidikan vokasi terapan pada berbagai bidang.',
+    color: '#14b8a6',
+  },
+  {
+    label: 'Akademi',
+    total: 401,
+    description: 'Pendidikan vokasi pada satu atau beberapa cabang ilmu.',
+    color: '#0ea5e9',
+  },
+  {
+    label: 'Akademi Komunitas',
+    total: 75,
+    description: 'Pendidikan vokasi berbasis kebutuhan dan keunggulan lokal.',
+    color: '#8b5cf6',
   },
 ]
 
@@ -595,6 +641,20 @@ function DashboardHeader({ onToggleSidebar }: { onToggleSidebar: () => void }) {
 }
 
 function MetricsSection({ cards }: { cards: MetricCard[] }) {
+  const [ptDetailOpen, setPtDetailOpen] = useState(false)
+  const totalPt = ptCategoryBreakdown.reduce((sum, item) => sum + item.total, 0)
+
+  useEffect(() => {
+    if (!ptDetailOpen) return
+    const onEsc = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setPtDetailOpen(false)
+    }
+    document.addEventListener('keydown', onEsc)
+    return () => document.removeEventListener('keydown', onEsc)
+  }, [ptDetailOpen])
+
+  const formatNumber = (value: number) => new Intl.NumberFormat('id-ID').format(value)
+
   return (
     <section className="px-4 py-5 md:px-6">
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
@@ -606,13 +666,89 @@ function MetricsSection({ cards }: { cards: MetricCard[] }) {
               </div>
               <div className="flex flex-1 flex-col">
                 <p className="text-xs font-bold uppercase tracking-[0.08em] text-slate-500">{card.title}</p>
-                <p className="mt-1 text-4xl font-extrabold leading-[0.95] tracking-tight text-slate-800">{card.value}</p>
+                {card.title === 'Total Perguruan Tinggi' ? (
+                  <button
+                    type="button"
+                    onClick={() => setPtDetailOpen(true)}
+                    className="mt-1 w-fit text-left text-4xl font-extrabold leading-[0.95] tracking-tight text-slate-800 transition hover:text-teal-700"
+                    aria-label="Lihat rincian kategori perguruan tinggi"
+                  >
+                    {card.value}
+                  </button>
+                ) : (
+                  <p className="mt-1 text-4xl font-extrabold leading-[0.95] tracking-tight text-slate-800">{card.value}</p>
+                )}
                 <p className="mt-auto pt-3 text-xs leading-relaxed text-slate-500">{card.delta}</p>
               </div>
             </div>
           </article>
         ))}
       </div>
+
+      {ptDetailOpen ? (
+        <div
+          className="fixed inset-0 z-[85] flex items-center justify-center bg-[rgba(8,36,36,0.38)] p-4 backdrop-blur-[2px]"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setPtDetailOpen(false)
+          }}
+          role="presentation"
+        >
+          <div
+            className="w-full max-w-[540px] rounded-[24px] border border-[#d7eaea] bg-white p-6 shadow-[0_30px_80px_rgba(15,23,42,0.22)]"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="pt-category-title"
+          >
+            <div className="mb-5 flex items-center justify-between">
+              <div>
+                <p className="text-[11px] uppercase tracking-wider text-[#8aabab]">Kategori Perguruan Tinggi</p>
+                <h4 id="pt-category-title" className="text-[28px] font-bold leading-tight text-[#2f2f2f]">
+                  Total Perguruan Tinggi
+                </h4>
+              </div>
+              <button
+                type="button"
+                onClick={() => setPtDetailOpen(false)}
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-[#eff7f7] text-[#3a5050] transition hover:bg-[#d7eaea]"
+                aria-label="Tutup"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="mb-5 flex items-center justify-center rounded-[14px] bg-[#eff7f7] py-4">
+              <div className="text-center">
+                <p className="text-[13px] text-[#8aabab]">Total Keseluruhan</p>
+                <p className="text-[40px] font-bold leading-none text-[#0b7b86]">{formatNumber(totalPt)}</p>
+                <p className="text-[12px] text-[#8aabab]">perguruan tinggi</p>
+              </div>
+            </div>
+
+            <div className="max-h-[46vh] space-y-3 overflow-y-auto pr-1">
+              {ptCategoryBreakdown.map((item) => {
+                const pct = Math.round((item.total / totalPt) * 100)
+                return (
+                  <div key={item.label}>
+                    <div className="mb-1 flex items-center justify-between text-[13px]">
+                      <span className="flex items-center gap-2 text-[#3a4040]">
+                        <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ backgroundColor: item.color }} />
+                        {item.label}
+                      </span>
+                      <span className="font-semibold text-[#2f2f2f]">
+                        {formatNumber(item.total)} <span className="font-normal text-[#8aabab]">({pct}%)</span>
+                      </span>
+                    </div>
+                    <div className="h-2 w-full overflow-hidden rounded-full bg-[#eff7f7]">
+                      <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: item.color }} />
+                    </div>
+                    <p className="mt-1 text-[12px] leading-relaxed text-[#7b9696]">{item.description}</p>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      ) : null}
     </section>
   )
 }
