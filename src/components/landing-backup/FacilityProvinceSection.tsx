@@ -110,8 +110,8 @@ export default function FacilityProvinceSection({
   )
 
   return (
-    <section className="w-full bg-[#f4f7fb] pb-6">
-      <div className="w-full px-4 sm:px-5 lg:px-6">
+    <section className="w-full bg-white pb-6">
+      <div className="w-full ">
 
         {/* Floating tooltip */}
         {tooltip.visible && (

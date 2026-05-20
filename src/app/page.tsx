@@ -38,7 +38,6 @@ import {
   FileCheck2,
   FileSpreadsheet,
   Home,
-  Info,
   LogOut,
   MapPinned,
   Medal,
@@ -283,6 +282,14 @@ const earlyWarnings = [
   { label: 'Skor di bawah ambang batas', value: 41, color: '#f97316' },
   { label: 'Belum ada kunjungan verifikasi', value: 18, color: '#eab308' },
   { label: 'Dokumen tidak lengkap', value: 35, color: '#0891b2' },
+]
+
+const rekomendasiPrioritas = [
+  { label: 'Penguatan Riset & Pengabdian Kesehatan', priority: 'TINGGI', impact: 90, color: '#ef4444', tone: 'text-red-600' },
+  { label: 'Penguatan Layanan Kesehatan & Skrining', priority: 'TINGGI', impact: 85, color: '#3b82f6', tone: 'text-red-600' },
+  { label: 'Program Kesehatan Jiwa Terintegrasi', priority: 'TINGGI', impact: 82, color: '#22c55e', tone: 'text-red-600' },
+  { label: 'Pengelolaan Lingkungan Berkelanjutan', priority: 'SEDANG', impact: 70, color: '#14b8a6', tone: 'text-amber-600' },
+  { label: 'Pencegahan Kekerasan & Relasi Sehat', priority: 'SEDANG', impact: 65, color: '#a855f7', tone: 'text-amber-600' },
 ]
 
 // ─────────────────────────────────────────────
@@ -1175,21 +1182,20 @@ function DecisionSupportSection() {
     <article className="rounded-2xl border border-[#d5e6e5] bg-white p-5 shadow-sm">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <h2 className="text-[22px] font-bold uppercase tracking-[0.04em] text-slate-900">Decision Support</h2>
-          <Info className="h-5 w-5 text-slate-400" />
+          <h2 className="text-[20px] font-bold uppercase tracking-[0.04em] text-slate-900">Decision Support</h2>
         </div>
-        <button type="button" className={outlineActionButtonClass}>
+        <button type="button" className={`${outlineActionButtonClass} shrink-0 whitespace-nowrap`}>
           <Eye className="h-4 w-4" />LIHAT DETAIL
         </button>
       </div>
-      <p className="mt-1 text-base leading-relaxed text-slate-500">Ringkasan rekomendasi dan peringatan dini untuk membantu prioritas intervensi kampus.</p>
+      <p className="mt-1 text-[15px] leading-relaxed text-slate-500">Ringkasan rekomendasi dan peringatan dini untuk membantu prioritas intervensi kampus.</p>
 
       {/* Tabs */}
       <div className="mt-3 flex gap-1 rounded-xl bg-slate-100 p-1">
         <button
           type="button"
           onClick={() => setActiveTab('insight')}
-          className={`inline-flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-lg px-2 py-2 text-sm font-bold uppercase tracking-[0.02em] transition ${activeTab === 'insight' ? 'bg-white text-teal-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+          className={`inline-flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-lg px-2 py-2 text-[13px] font-bold uppercase tracking-[0.02em] transition ${activeTab === 'insight' ? 'bg-white text-teal-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
         >
           <Sparkles className="h-4 w-4 shrink-0" />
           <span className="whitespace-nowrap">Ringkasan Insight</span>
@@ -1197,28 +1203,28 @@ function DecisionSupportSection() {
         <button
           type="button"
           onClick={() => setActiveTab('warning')}
-          className={`inline-flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-lg px-2 py-2 text-sm font-bold uppercase tracking-[0.02em] transition ${activeTab === 'warning' ? 'bg-white text-teal-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+          className={`inline-flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-lg px-2 py-2 text-[13px] font-bold uppercase tracking-[0.02em] transition ${activeTab === 'warning' ? 'bg-white text-teal-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
         >
           <Bell className="h-4 w-4 shrink-0" />
-          <span className="whitespace-nowrap">Peringatan Dini (Early Warning)</span>
+          <span className="whitespace-nowrap">Peringatan Dini</span>
         </button>
       </div>
 
       {activeTab === 'insight' ? (
         <div className="mt-3 space-y-2">
-          {dssInsights.map((item) => {
+          {dssInsights.slice(0, 4).map((item) => {
             const Icon = item.icon
             return (
-              <div key={item.id} className="flex items-start gap-3 rounded-xl border border-slate-100 bg-slate-50/60 px-3 py-3">
-                <div className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${item.iconBg}`}>
-                  <Icon className={`h-5 w-5 ${item.iconColor}`} />
+              <div key={item.id} className="flex items-start gap-3 rounded-xl border border-slate-100 bg-slate-50/60 px-3 py-2.5">
+                <div className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${item.iconBg}`}>
+                  <Icon className={`h-4 w-4 ${item.iconColor}`} />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-base leading-relaxed text-slate-700">
+                  <p className="text-[15px] leading-relaxed text-slate-700">
                     {item.title}
                     {item.highlight ? <span className="font-semibold text-slate-900"> {item.highlight}</span> : null}
                   </p>
-                  <p className="mt-0.5 text-[15px] font-medium text-teal-700">{item.action}</p>
+                  <p className="mt-0.5 text-sm font-medium text-teal-700">{item.action}</p>
                 </div>
               </div>
             )
@@ -1229,13 +1235,13 @@ function DecisionSupportSection() {
           {earlyWarnings.map((item) => (
             <div key={item.label} className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/60 px-3 py-3">
               <div className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: item.color }} />
-              <p className="flex-1 text-base text-slate-700">{item.label}</p>
-              <span className="rounded-full px-2 py-0.5 text-base font-bold text-white" style={{ backgroundColor: item.color }}>
+              <p className="flex-1 text-[15px] text-slate-700">{item.label}</p>
+              <span className="rounded-full px-2 py-0.5 text-[13px] font-bold text-white" style={{ backgroundColor: item.color }}>
                 {item.value} Kampus
               </span>
             </div>
           ))}
-          <p className="mt-1 text-[15px] text-slate-400">*Data diperbarui secara berkala berdasarkan laporan masuk.</p>
+          <p className="mt-1 text-[13px] text-slate-400">*Data diperbarui secara berkala berdasarkan laporan masuk.</p>
         </div>
       )}
     </article>
@@ -1250,43 +1256,42 @@ function KampusPrioritasSection() {
     <article className="rounded-2xl border border-[#d5e6e5] bg-white p-5 shadow-sm">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <h2 className="text-[22px] font-bold uppercase tracking-[0.04em] text-slate-900">Kampus Prioritas Pendampingan</h2>
-          <Info className="h-5 w-5 text-slate-400" />
+          <h2 className="text-[20px] font-bold uppercase tracking-[0.04em] text-slate-900">Kampus Prioritas Pendampingan</h2>
         </div>
-        <button type="button" className={outlineActionButtonClass}>
+        <button type="button" className={`${outlineActionButtonClass} shrink-0 whitespace-nowrap`}>
           <Eye className="h-4 w-4" />LIHAT DETAIL
         </button>
       </div>
-      <p className="mt-1 text-base leading-relaxed text-slate-500">Daftar perguruan tinggi dengan skor rendah yang membutuhkan intervensi segera.</p>
+      <p className="mt-1 text-[15px] leading-relaxed text-slate-500">Daftar perguruan tinggi dengan skor rendah yang membutuhkan intervensi segera.</p>
 
       <div className="mt-3 overflow-hidden rounded-xl border border-slate-100">
-        <table className="w-full text-base">
+        <table className="w-full text-[15px]">
           <thead>
             <tr className="border-b border-slate-100 bg-slate-50">
-              <th className="px-3 py-2.5 text-left font-semibold text-slate-500">Perguruan Tinggi</th>
-              <th className="px-3 py-2.5 text-center font-semibold text-slate-500">Skor</th>
-              <th className="px-3 py-2.5 text-center font-semibold text-slate-500">Kategori</th>
-              <th className="px-3 py-2.5 text-center font-semibold text-slate-500">Prioritas</th>
+              <th className="px-2.5 py-2 text-left text-sm font-semibold text-slate-500">Perguruan Tinggi</th>
+              <th className="px-2.5 py-2 text-center text-sm font-semibold text-slate-500">Skor</th>
+              <th className="px-2.5 py-2 text-center text-sm font-semibold text-slate-500">Kategori</th>
+              <th className="px-2.5 py-2 text-center text-sm font-semibold text-slate-500">Prioritas</th>
             </tr>
           </thead>
           <tbody>
-            {kampusPrioritasData.map((row, i) => (
+            {kampusPrioritasData.slice(0, 5).map((row, i) => (
               <tr key={row.no} className={`border-b border-slate-50 transition hover:bg-teal-50/40 ${i % 2 === 0 ? 'bg-white' : 'bg-slate-50/40'}`}>
-                <td className="px-3 py-2.5">
+                <td className="px-2.5 py-2">
                   <div className="flex items-center gap-2">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 text-sm font-bold text-slate-500">{row.no}</span>
-                    <span className="font-medium text-slate-800">{row.name}</span>
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-100 text-[12px] font-bold text-slate-500">{row.no}</span>
+                    <span className="font-medium leading-snug text-slate-800">{row.name}</span>
                   </div>
                 </td>
-                <td className="px-3 py-2.5 text-center font-bold text-slate-800">{row.skor}</td>
-                <td className="px-3 py-2.5 text-center">
-                  <span className="inline-flex items-center gap-1 rounded-full border border-yellow-200 bg-yellow-50 px-2 py-0.5 text-sm font-semibold text-yellow-700">
-                    <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+                <td className="px-2.5 py-2 text-center font-bold text-slate-800">{row.skor}</td>
+                <td className="px-2.5 py-2 text-center">
+                  <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full border border-yellow-200 bg-yellow-50 px-1.5 py-0.5 text-[12px] font-semibold leading-none text-yellow-700">
+                    <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
                     {row.kategori}
                   </span>
                 </td>
-                <td className="px-3 py-2.5 text-center">
-                  <span className="inline-block rounded-full bg-red-100 px-2 py-0.5 text-sm font-bold text-red-600">
+                <td className="px-2.5 py-2 text-center">
+                  <span className="inline-block rounded-full bg-red-100 px-1.5 py-0.5 text-[12px] font-bold leading-none text-red-600">
                     {row.prioritas}
                   </span>
                 </td>
@@ -1351,18 +1356,17 @@ function ProyeksiSkorSection() {
   return (
     <article className="rounded-2xl border border-[#d5e6e5] bg-white p-5 shadow-sm">
       <div className="flex items-center gap-2">
-        <h2 className="text-[22px] font-bold uppercase tracking-[0.04em] text-slate-900">Proyeksi Skor (What-if Analysis)</h2>
-        <Info className="h-5 w-5 text-slate-400" />
+        <h2 className="text-[20px] font-bold uppercase tracking-[0.04em] text-slate-900">Proyeksi Skor (What-if Analysis)</h2>
       </div>
-      <p className="mt-1 text-base leading-relaxed text-slate-500">Simulasi peningkatan skor jika aspek tertentu ditingkatkan.</p>
+      <p className="mt-1 text-[15px] leading-relaxed text-slate-500">Simulasi peningkatan skor jika aspek tertentu ditingkatkan.</p>
 
       {/* Dropdown */}
       <div className="mt-3">
-        <label className="text-[15px] font-semibold text-slate-500 uppercase tracking-wide">Pilih Perguruan Tinggi</label>
+        <label className="text-sm font-semibold text-slate-500 uppercase tracking-wide">Pilih Perguruan Tinggi</label>
         <select
           value={selectedIdx}
           onChange={(e) => setSelectedIdx(Number(e.target.value))}
-          className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-lg font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-400"
+          className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-[15px] font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-400"
         >
           {proyeksiKampusData.map((k, i) => (
             <option key={k.name} value={i}>{k.name}</option>
@@ -1372,7 +1376,7 @@ function ProyeksiSkorSection() {
 
       {/* Aspects checklist */}
       <div className="mt-3">
-        <p className="text-[15px] font-semibold uppercase tracking-wide text-slate-500">Jika aspek berikut ditingkatkan:</p>
+        <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">Jika aspek berikut ditingkatkan:</p>
         <div className="mt-2 space-y-1.5">
           {kampus.aspects.map((a) => (
             <label key={a.key} className="flex cursor-pointer items-center gap-3 rounded-lg px-2 py-1.5 transition hover:bg-slate-50">
@@ -1382,8 +1386,8 @@ function ProyeksiSkorSection() {
                 onChange={() => toggleAspect(a.key)}
                 className="h-4 w-4 rounded border-slate-300 accent-teal-600"
               />
-              <span className="flex-1 text-base text-slate-700">{a.label}</span>
-              <span className="text-[15px] font-semibold text-teal-600">+{a.gain} poin</span>
+              <span className="flex-1 text-[15px] text-slate-700">{a.label}</span>
+              <span className="text-sm font-semibold text-teal-600">+{a.gain} poin</span>
             </label>
           ))}
         </div>
@@ -1458,6 +1462,55 @@ function ProyeksiSkorSection() {
 // ─────────────────────────────────────────────
 // NEW: Combined 3-card row
 // ─────────────────────────────────────────────
+function RekomendasiPrioritasSection() {
+  return (
+    <article className="rounded-2xl border border-[#d5e6e5] bg-white p-5 shadow-sm">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-2">
+          <h2 className="text-[20px] font-bold uppercase tracking-[0.04em] text-slate-900">Rekomendasi Prioritas (Top 5)</h2>
+        </div>
+        <button type="button" className={`${outlineActionButtonClass} shrink-0 whitespace-nowrap`}>
+          <Eye className="h-4 w-4" />DETAIL
+        </button>
+      </div>
+      <p className="mt-1 text-[15px] leading-relaxed text-slate-500">Area intervensi dengan dampak terbesar untuk peningkatan Kampus Sehat.</p>
+
+      <div className="mt-3 space-y-2">
+        {rekomendasiPrioritas.map((item, index) => (
+          <div key={item.label} className="rounded-xl border border-slate-100 bg-white px-3 py-2.5 shadow-[0_1px_8px_rgba(15,23,42,0.04)]">
+            <div className="flex items-start gap-3">
+              <span
+                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-sm font-extrabold"
+                style={{ backgroundColor: `${item.color}12`, color: item.color }}
+              >
+                {index + 1}
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-bold text-slate-800">{item.label}</p>
+                <div className="mt-1 flex items-center gap-3 text-[13px]">
+                  <span className="text-slate-500">
+                    Prioritas: <strong className={item.tone}>{item.priority}</strong>
+                  </span>
+                  <span className="text-slate-500">Dampak</span>
+                </div>
+                <div className="mt-1.5 flex items-center gap-2">
+                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100">
+                    <div
+                      className="h-full rounded-full bg-[#0f8f7f] transition-[width] duration-700"
+                      style={{ width: `${item.impact}%` }}
+                    />
+                  </div>
+                  <span className="w-9 text-right text-[13px] font-bold text-teal-700">{item.impact}%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </article>
+  )
+}
+
 function DecisionSupportSystemIntro() {
   return (
     <section className="px-4 pb-5 md:px-6">
@@ -1482,10 +1535,11 @@ function DecisionSupportSystemIntro() {
 function AnalyticsSection() {
   return (
     <section className="px-4 pb-8 md:px-6">
-      <div className="grid gap-4 xl:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <DecisionSupportSection />
         <KampusPrioritasSection />
         <ProyeksiSkorSection />
+        <RekomendasiPrioritasSection />
       </div>
     </section>
   )
@@ -1508,7 +1562,7 @@ export default function HomePage() {
         <ScoreSection aspectScores={dashboardData.aspectScores} starDistribution={dashboardData.starDistribution} trend={dashboardData.trend} />
         <DecisionSupportSystemIntro />
         <AnalyticsSection />
-        <section className="px-4 pb-8 md:px-6">
+        <section className="px-4 pb-8 ">
           <FacilityProvinceSection />
         </section>
       </div>
