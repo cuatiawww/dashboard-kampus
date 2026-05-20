@@ -53,6 +53,7 @@ import {
   X,
 } from 'lucide-react'
 import rawData from '@/components/dashboard-campus/dashboard-data.json'
+import ProvinceMapOlComponent from '@/components/dashboard-campus/ProvinceMapOl'
 
 type MetricCard = {
   title: string
@@ -103,7 +104,7 @@ type ProvinceMapDetail = {
 const dashboardData = rawData as DashboardData
 
 const outlineActionButtonClass =
-  'inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-[13px] font-bold uppercase tracking-[0.03em] text-slate-600 transition hover:border-teal-200 hover:bg-teal-50 hover:text-teal-700'
+  'inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-bold uppercase tracking-[0.03em] text-slate-600 transition hover:border-teal-200 hover:bg-teal-50 hover:text-teal-700'
 
 const iconByMetricKey = {
   school: '/rumah sakit.svg',
@@ -147,6 +148,34 @@ const toneToHex: Record<string, string> = {
   'bg-pink-600': '#db2777',
   'bg-sky-500': '#0ea5e9',
 }
+
+const aiRecommendationSections = [
+  {
+    eyebrow: 'GAP ANALISIS NASIONAL',
+    title: 'Capaian Kampus Sehat nasional masih menunjukkan kesenjangan antar aspek penilaian.',
+    body:
+      'Hasil penilaian Kampus Sehat secara nasional menunjukkan bahwa capaian perguruan tinggi belum merata pada 8 aspek penyelenggaraan. Masih terdapat jarak antara capaian aktual dengan target ideal 1000 poin atau kategori Bintang 5. Gap utama tampak pada aspek yang membutuhkan penguatan kelembagaan, kesinambungan program, bukti dukung yang lengkap, serta pemanfaatan data survei dan monitoring evaluasi sebagai dasar perbaikan.',
+  },
+  {
+    eyebrow: 'TEMUAN UTAMA',
+    title: 'Aspek dengan gap tertinggi perlu menjadi prioritas intervensi nasional.',
+    body:
+      'Aspek layanan kesehatan, kesehatan jiwa, survei mandiri, penelitian dan pengabdian masyarakat, serta relasi sehat perlu dibaca sebagai indikator kemampuan kampus menerjemahkan kebijakan menjadi program yang terukur, rutin, dan terdokumentasi. Rendahnya capaian pada aspek tersebut menunjukkan bahwa sebagian kampus telah memiliki komitmen awal, tetapi belum optimal dalam tata kelola pelaksanaan, konsistensi program, dan siklus perbaikan berbasis data.',
+  },
+]
+
+const aiInstitutionRecommendations = [
+  {
+    label: 'Kementerian Kesehatan',
+    text:
+      'Kemenkes perlu menjadi pengampu utama standar Kampus Sehat melalui penguatan pedoman nasional, rubrik penilaian, verifikasi bukti, mekanisme visitasi, dan sistem apresiasi. Intervensi nasional sebaiknya diarahkan pada aspek dengan gap terbesar agar pendampingan lebih fokus, terukur, dan berdampak pada peningkatan kategori bintang.',
+  },
+  {
+    label: 'Kemendikti / Kemendiktisaintek',
+    text:
+      'Kemendikti perlu mendorong seluruh perguruan tinggi mengadopsi Kampus Sehat sebagai bagian dari tata kelola mutu pendidikan tinggi, bukan sebagai kegiatan tambahan. Setiap kampus perlu diarahkan memiliki SK atau tim pelaksana, rencana kerja, dukungan anggaran, integrasi tridharma, survei mandiri, dan pelaporan berkala yang dapat diverifikasi.',
+  },
+]
 
 function getProvinceName(properties: Record<string, unknown>) {
   const candidates = ['name', 'NAME_1', 'PROPINSI', 'PROVINSI', 'province', 'WADMPR']
@@ -427,7 +456,7 @@ function DashboardHeader({ onToggleSidebar }: { onToggleSidebar: () => void }) {
             <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-center md:gap-5">
               <Image src="/Logo-Kemenkes.png" alt="Logo Kemenkes" width={170} height={62} className="h-auto w-[132px] shrink-0 md:w-[168px]" priority />
               <div className="min-w-0 border-teal-200/80 md:border-l md:pl-5">
-                <h1 className="max-w-[720px] text-2xl font-extrabold leading-tight tracking-normal text-slate-900 md:text-3xl">Selamat datang di Dashboard Kampus Sehat</h1>
+                <h1 className="max-w-[720px] text-2xl font-extrabold leading-tight tracking-normal text-slate-900 md:text-3xl">DASHBOARD PENILAIAN KAMPUS SEHAT SECARA NASIONAL</h1>
                 <p className="mt-2 max-w-[760px] text-sm leading-relaxed text-slate-600 md:text-base">Pantau perkembangan penyelenggaraan Kampus Sehat di seluruh Indonesia secara real-time.</p>
               </div>
             </div>
@@ -753,15 +782,97 @@ function ProvinceMapOl({ selectedProvince }: { selectedProvince: string }) {
   )
 }
 
+function AiRecommendationModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  if (!open) return null
+
+  return (
+    <div
+      className="fixed inset-0 z-[80] flex items-center justify-center bg-[rgba(8,36,36,0.56)] p-4 backdrop-blur-[3px]"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose()
+      }}
+      role="presentation"
+    >
+      <div
+        className="flex max-h-[88vh] w-full max-w-[860px] flex-col overflow-hidden rounded-[20px] border border-[#b7d9d8] bg-[#f7fffe] shadow-[0_28px_72px_rgba(0,60,60,0.26)]"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="ai-recommendation-title"
+      >
+        <div className="border-b border-[#cfe9e8] bg-gradient-to-br from-[#effafa] to-[#dff2f1] px-5 py-4 md:px-6">
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#b8dcda] bg-white/80 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-[#0f8f96] shadow-sm">
+                <Sparkles className="h-3.5 w-3.5" />
+                Rekomendasi AI
+              </div>
+              <h2 id="ai-recommendation-title" className="mt-3 text-xl font-extrabold uppercase leading-tight tracking-normal text-[#153737] md:text-2xl">
+                Penilaian Kampus Sehat
+              </h2>
+              <p className="mt-1 max-w-[680px] text-sm leading-relaxed text-[#526f6f]">
+                Analisis prioritas nasional berdasarkan capaian skor, gap aspek penilaian, dan kebutuhan penguatan tata kelola.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[#bad9d8] bg-white/95 text-[#5a7070] transition hover:border-[#85c5c2] hover:bg-[#f4fbfb]"
+              aria-label="Tutup modal"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+
+        <div className="space-y-4 overflow-y-auto px-5 py-5 md:px-6">
+          {aiRecommendationSections.map((section, index) => (
+            <article key={section.eyebrow} className="rounded-2xl border border-[#d3e9e8] bg-white p-4 shadow-sm">
+              <div className="flex items-start gap-3">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#e3f5f4] text-[#0f8f96]">
+                  {index === 0 ? <TrendingUp className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />}
+                </div>
+                <div>
+                  <p className="text-sm font-extrabold uppercase tracking-[0.08em] text-[#0f8f96] md:text-base">{section.eyebrow}</p>
+                  <h3 className="mt-2 text-lg font-bold leading-snug text-[#183838] md:text-xl">{section.title}</h3>
+                  <p className="mt-3 text-sm leading-relaxed text-[#4c6b6b]">{section.body}</p>
+                </div>
+              </div>
+            </article>
+          ))}
+
+          <article className="rounded-2xl border border-[#d3e9e8] bg-white p-4 shadow-sm">
+            <div className="mb-3 flex items-center gap-2">
+              <ShieldCheck className="h-4 w-4 text-[#0f8f96]" />
+              <p className="text-sm font-extrabold uppercase tracking-[0.08em] text-[#0f8f96] md:text-base">REKOMENDASI</p>
+            </div>
+            <div className="space-y-3">
+              {aiInstitutionRecommendations.map((item) => (
+                <div key={item.label} className="rounded-xl border border-[#e0eeee] bg-[#f8fdfd] p-3">
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-emerald-600" />
+                    <h4 className="text-base font-bold text-[#183838]">{item.label}</h4>
+                  </div>
+                  <p className="mt-2 text-sm leading-relaxed text-[#4c6b6b]">{item.text}</p>
+                </div>
+              ))}
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function OverviewSplitSection({ data }: { data: DashboardData }) {
   const [selectedProvince, setSelectedProvince] = useState(data.provinces[0] ?? 'Semua Provinsi')
+  const [aiRecommendationOpen, setAiRecommendationOpen] = useState(false)
   return (
     <section className="px-4 pb-5 md:px-6">
-      <div className="grid gap-4 xl:grid-cols-3 xl:items-stretch">
-        <div className="space-y-4 xl:col-span-1 xl:flex xl:h-[640px] xl:flex-col xl:gap-4 xl:space-y-0">
+      <div className="grid gap-4 xl:grid-cols-[minmax(220px,1fr)_minmax(0,4fr)] xl:items-stretch">
+        <div className="space-y-4 xl:flex xl:h-[640px] xl:flex-col xl:gap-4 xl:space-y-0">
           <article className="rounded-xl bg-gradient-to-br from-teal-700 to-cyan-700 p-5 text-white shadow-md xl:flex-[4]">
-            <h3 className="text-lg font-bold uppercase tracking-[0.04em] text-teal-50">Rata-rata Skor Nasional</h3>
-            <p className="mt-1 text-xs leading-relaxed text-teal-100">Indikator ringkas performa nasional pada periode terbaru.</p>
+            <h3 className="text-[22px] font-bold uppercase tracking-[0.04em] text-teal-50">Rata-rata Skor Nasional</h3>
+            <p className="mt-1 text-base leading-relaxed text-teal-100">Indikator ringkas performa nasional pada periode terbaru.</p>
             <p className="mt-3 text-5xl font-bold leading-none">{data.summary.average}</p>
             <p className="mt-1 text-lg text-teal-100">/ 1000</p>
             <div className="mt-5 h-px bg-white/30" />
@@ -774,14 +885,12 @@ function OverviewSplitSection({ data }: { data: DashboardData }) {
 
             <div className="mt-6 rounded-2xl border border-white/30 bg-white/12 p-3 backdrop-blur-md">
               <p className="text-xs font-semibold uppercase tracking-[0.08em] text-teal-50/95">Aksi Cepat</p>
-              <div className="mt-3 grid grid-cols-3 gap-2">
-                <button type="button" className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-white/30 bg-white/20 px-3 text-[13px] font-bold uppercase tracking-[0.03em] text-white transition hover:bg-white/30">
-                  <FileText className="h-3.5 w-3.5" />Detail
-                </button>
-                <button type="button" className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-white/30 bg-white/20 px-3 text-[13px] font-bold uppercase tracking-[0.03em] text-white transition hover:bg-white/30">
-                  <Download className="h-3.5 w-3.5" />Download
-                </button>
-                <button type="button" className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-white/30 bg-white/20 px-3 text-[13px] font-bold uppercase tracking-[0.03em] text-white transition hover:bg-white/30">
+              <div className="mt-3">
+                <button
+                  type="button"
+                  onClick={() => setAiRecommendationOpen(true)}
+                  className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-white/30 bg-white/20 px-3 text-[13px] font-bold uppercase tracking-[0.03em] text-white transition hover:bg-white/30"
+                >
                   <Sparkles className="h-3.5 w-3.5" />Rekomendasi AI
                 </button>
               </div>
@@ -794,19 +903,20 @@ function OverviewSplitSection({ data }: { data: DashboardData }) {
             <p className="mt-1 text-sm text-slate-700 md:text-base">{data.sourceInfo.dateValue}</p>
           </article>
         </div>
-        <article className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm xl:col-span-2 xl:flex xl:h-[640px] xl:flex-col">
+        <article className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm xl:flex xl:h-[640px] xl:flex-col">
           <div className="mb-3 flex items-center justify-between">
-            <h3 className="text-lg font-bold uppercase tracking-[0.04em] text-slate-900">Kepadatan / Sebaran Kampus Sehat</h3>
+            <h3 className="text-[22px] font-bold uppercase tracking-[0.04em] text-slate-900">Peta Sebaran Penilaian Kampus Sehat Secara Nasional </h3>
             <select value={selectedProvince} onChange={(e) => setSelectedProvince(e.target.value)} className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-600">
               {data.provinces.map((province) => <option key={province}>{province}</option>)}
             </select>
           </div>
-          <p className="mb-3 text-sm leading-relaxed text-slate-600">Pemetaan ini menampilkan distribusi capaian kampus sehat antar provinsi untuk membantu identifikasi wilayah dengan performa tertinggi dan terendah.</p>
+          <p className="mb-3 text-base leading-relaxed text-slate-600">Pemetaan ini menampilkan distribusi capaian kampus sehat antar provinsi untuk membantu identifikasi wilayah dengan performa tertinggi dan terendah.</p>
           <div className="h-[520px] overflow-hidden rounded-xl border border-dashed border-teal-200 bg-[#e6f5f3] xl:h-full xl:flex-1">
-            <ProvinceMapOl key={selectedProvince} selectedProvince={selectedProvince} />
+            <ProvinceMapOlComponent selectedProvince={selectedProvince} />
           </div>
         </article>
       </div>
+      <AiRecommendationModal open={aiRecommendationOpen} onClose={() => setAiRecommendationOpen(false)} />
     </section>
   )
 }
@@ -887,31 +997,31 @@ function ScoreSection({
   const [activePieIndex, setActivePieIndex] = useState<number | null>(null)
   const [activeBarIndex, setActiveBarIndex] = useState<number | null>(null)
 
-  // Use fixed star distribution data (override JSON with correct colors/ranges)
   const pieData = STAR_DIST_FIXED
   const totalCampus = pieData.reduce((acc, item) => acc + item.total, 0)
 
   return (
     <section className="px-4 pb-5 md:px-6">
-      <div className="grid gap-4 xl:grid-cols-3">
+      <div className="grid gap-4 xl:grid-cols-3 xl:items-stretch">
 
         {/* ── CARD 1: Distribusi Kategori Bintang ── */}
-        <article className="rounded-2xl border border-[#d5e6e5] bg-white p-5 shadow-sm">
+        <article className="rounded-2xl border border-[#d5e6e5] bg-white p-5 shadow-sm flex flex-col min-h-[520px]">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold uppercase tracking-[0.04em] text-slate-900">Distribusi Kategori Bintang</h2>
+            <h2 className="text-[22px] font-bold uppercase tracking-[0.04em] text-slate-900">Distribusi Kategori Bintang</h2>
             <button type="button" className={outlineActionButtonClass}><Eye className="h-4 w-4" />LIHAT DETAIL</button>
           </div>
-          <p className="mt-0.5 text-xs leading-relaxed text-slate-500">Proporsi jumlah kampus pada tiap level bintang.</p>
-          <div className="mt-4 flex items-center gap-4">
+          <p className="mt-1 text-base leading-relaxed text-slate-500">Proporsi jumlah kampus pada tiap level bintang.</p>
+
+          <div className="mt-4 flex-1 flex flex-row items-center gap-4">
             {/* Donut */}
-            <div className="relative h-[170px] w-[170px] shrink-0">
+            <div className="relative shrink-0" style={{ width: 220, height: 220 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={pieData}
                     dataKey="total"
-                    innerRadius={48}
-                    outerRadius={66}
+                    innerRadius={66}
+                    outerRadius={96}
                     paddingAngle={2}
                     startAngle={90}
                     endAngle={-270}
@@ -931,32 +1041,30 @@ function ScoreSection({
                 </PieChart>
               </ResponsiveContainer>
               <div className="pointer-events-none absolute inset-0 grid place-content-center text-center">
-                <p className="text-[10px] text-slate-500">Total</p>
-                <p className="text-2xl font-extrabold leading-none text-slate-800">{totalCampus.toLocaleString('id-ID')}</p>
-                <p className="text-[10px] text-slate-500">Kampus</p>
+                <p className="text-sm text-slate-500">Total</p>
+                <p className="text-[32px] font-extrabold leading-none text-slate-800">{totalCampus.toLocaleString('id-ID')}</p>
+                <p className="text-sm text-slate-500">Kampus</p>
               </div>
             </div>
-            {/* Legend */}
-            <div className="flex-1 space-y-1.5">
+
+            {/* Legend di samping */}
+            <div className="flex-1 space-y-2">
               {pieData.map((item, index) => (
                 <button
                   key={item.label}
                   type="button"
                   onMouseEnter={() => setActivePieIndex(index)}
                   onMouseLeave={() => setActivePieIndex(null)}
-                  className={`flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-xs transition ${activePieIndex === index ? 'bg-slate-100' : 'hover:bg-slate-50'}`}
+                  className={`flex w-full items-center justify-between rounded-lg px-2 py-2 transition ${activePieIndex === index ? 'bg-slate-100' : 'hover:bg-slate-50'}`}
                 >
                   <div className="flex items-center gap-2">
-                    <Star
-                      className="h-3.5 w-3.5"
-                      style={{ fill: item.color, color: item.color }}
-                    />
-                    <div className="text-left">
-                      <span className="block font-semibold text-slate-800">{item.label.toUpperCase()}</span>
-                      <span className="text-[10px] text-slate-400">{item.range}</span>
+                    <Star className="h-4 w-4 shrink-0" style={{ fill: item.color, color: item.color }} />
+                    <div className="text-left leading-tight">
+                      <span className="block font-semibold text-slate-800 text-[13px]">{item.label.toUpperCase()}</span>
+                      <span className="text-[11px] text-slate-400">{item.range}</span>
                     </div>
                   </div>
-                  <span className="font-semibold text-slate-700">
+                  <span className="font-semibold text-slate-700 text-[13px] whitespace-nowrap ml-2">
                     {item.total} ({item.percent}%)
                   </span>
                 </button>
@@ -966,18 +1074,31 @@ function ScoreSection({
         </article>
 
         {/* ── CARD 2: Rata-rata Skor per Aspek ── */}
-        <article className="rounded-2xl border border-[#d5e6e5] bg-white p-5 shadow-sm">
+        <article className="rounded-2xl border border-[#d5e6e5] bg-white p-5 shadow-sm flex flex-col min-h-[520px]">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold uppercase tracking-[0.04em] text-slate-900">Rata-rata Skor per Aspek</h2>
+            <h2 className="text-[22px] font-bold uppercase tracking-[0.04em] text-slate-900">Rata-rata Skor per Aspek</h2>
             <button type="button" className={outlineActionButtonClass}><Eye className="h-4 w-4" />LIHAT DETAIL</button>
           </div>
-          <p className="mt-0.5 text-xs leading-relaxed text-slate-500">Perbandingan nilai setiap aspek penilaian utama.</p>
-          <div className="mt-3 h-[230px] w-full">
+          <p className="mt-1 text-base leading-relaxed text-slate-500">Perbandingan nilai setiap aspek penilaian utama.</p>
+          <div className="mt-3 flex-1">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={ASPECT_SCORES_8} margin={{ top: 22, right: 4, left: -20, bottom: 4 }} barCategoryGap="18%">
+              <BarChart
+                data={ASPECT_SCORES_8}
+                margin={{ top: 22, right: 4, left: -20, bottom: 80 }}
+                barCategoryGap="18%"
+              >
                 <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="#f1f5f9" />
-                <XAxis dataKey="name" tick={{ fontSize: 9, fill: '#64748b' }} tickLine={false} axisLine={false} interval={0} />
-                <YAxis domain={[0, 1000]} tick={{ fontSize: 9, fill: '#94a3b8' }} tickLine={false} axisLine={false} ticks={[0, 250, 500, 750, 1000]} />
+                <XAxis
+                  dataKey="name"
+                  tick={{ fontSize: 10, fill: '#64748b' }}
+                  tickLine={false}
+                  axisLine={false}
+                  interval={0}
+                  angle={-38}
+                  textAnchor="end"
+                  height={80}
+                />
+                <YAxis domain={[0, 1000]} tick={{ fontSize: 10, fill: '#94a3b8' }} tickLine={false} axisLine={false} ticks={[0, 250, 500, 750, 1000]} />
                 <Tooltip content={<AspekTooltip />} cursor={{ fill: 'rgba(15,23,42,0.04)' }} />
                 <ReferenceLine
                   y={NATIONAL_AVG}
@@ -986,11 +1107,11 @@ function ScoreSection({
                   strokeWidth={1.5}
                   label={{ value: `Rata-rata Nasional (${NATIONAL_AVG})`, position: 'insideBottomRight', fontSize: 9, fill: '#ef4444' }}
                 />
-                <Bar dataKey="value" radius={[3, 3, 0, 0]} animationDuration={650}
+                <Bar dataKey="value" radius={[4, 4, 0, 0]} animationDuration={650}
                   onMouseEnter={(_, index) => setActiveBarIndex(index)}
                   onMouseLeave={() => setActiveBarIndex(null)}
                 >
-                  <LabelList dataKey="value" position="top" style={{ fontSize: 9, fontWeight: 700, fill: '#334155' }} />
+                  <LabelList dataKey="value" position="top" style={{ fontSize: 10, fontWeight: 700, fill: '#334155' }} />
                   {ASPECT_SCORES_8.map((entry, index) => (
                     <Cell
                       key={entry.name}
@@ -1006,18 +1127,18 @@ function ScoreSection({
         </article>
 
         {/* ── CARD 3: Tren Skor Rata-rata Nasional ── */}
-        <article className="rounded-2xl border border-[#d5e6e5] bg-white p-5 shadow-sm">
+        <article className="rounded-2xl border border-[#d5e6e5] bg-white p-5 shadow-sm flex flex-col min-h-[520px]">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold uppercase tracking-[0.04em] text-slate-900">Tren Skor Rata-rata Nasional</h2>
+            <h2 className="text-[22px] font-bold uppercase tracking-[0.04em] text-slate-900">Tren Skor Rata-rata Nasional</h2>
             <button type="button" className={outlineActionButtonClass}><Eye className="h-4 w-4" />LIHAT DETAIL</button>
           </div>
-          <p className="mt-0.5 text-xs leading-relaxed text-slate-500">Pergerakan skor nasional dari tahun ke tahun.</p>
-          <div className="mt-3 h-[250px] w-full">
+          <p className="mt-1 text-base leading-relaxed text-slate-500">Pergerakan skor nasional dari tahun ke tahun.</p>
+          <div className="mt-3 flex-1">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={TREND_DATA_FIXED} margin={{ top: 28, right: 16, left: -20, bottom: 4 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                <XAxis dataKey="year" tick={{ fontSize: 11, fill: '#64748b' }} tickLine={false} axisLine={{ stroke: '#e2e8f0' }} />
-                <YAxis domain={[0, 1000]} tick={{ fontSize: 9, fill: '#94a3b8' }} tickLine={false} axisLine={false} ticks={[0, 250, 500, 750, 1000]} />
+                <XAxis dataKey="year" tick={{ fontSize: 12, fill: '#64748b' }} tickLine={false} axisLine={{ stroke: '#e2e8f0' }} />
+                <YAxis domain={[0, 1000]} tick={{ fontSize: 10, fill: '#94a3b8' }} tickLine={false} axisLine={false} ticks={[0, 250, 500, 750, 1000]} />
                 <Tooltip
                   formatter={(value) => [Number(value ?? 0).toFixed(2), 'Skor']}
                   contentStyle={{ fontSize: 11, borderRadius: 8, border: '1px solid #e2e8f0' }}
@@ -1053,32 +1174,32 @@ function DecisionSupportSection() {
     <article className="rounded-2xl border border-[#d5e6e5] bg-white p-5 shadow-sm">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <h2 className="text-lg font-bold uppercase tracking-[0.04em] text-slate-900">Decision Support</h2>
-          <Info className="h-4 w-4 text-slate-400" />
+          <h2 className="text-[22px] font-bold uppercase tracking-[0.04em] text-slate-900">Decision Support</h2>
+          <Info className="h-5 w-5 text-slate-400" />
         </div>
         <button type="button" className={outlineActionButtonClass}>
           <Eye className="h-4 w-4" />LIHAT DETAIL
         </button>
       </div>
-      <p className="mt-1 text-xs leading-relaxed text-slate-500">Ringkasan rekomendasi dan peringatan dini untuk membantu prioritas intervensi kampus.</p>
+      <p className="mt-1 text-base leading-relaxed text-slate-500">Ringkasan rekomendasi dan peringatan dini untuk membantu prioritas intervensi kampus.</p>
 
       {/* Tabs */}
       <div className="mt-3 flex gap-1 rounded-xl bg-slate-100 p-1">
         <button
           type="button"
           onClick={() => setActiveTab('insight')}
-          className={`inline-flex flex-1 items-center justify-center gap-2 rounded-lg py-2 text-[13px] font-bold uppercase tracking-[0.03em] transition ${activeTab === 'insight' ? 'bg-white text-teal-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+          className={`inline-flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-lg px-2 py-2 text-sm font-bold uppercase tracking-[0.02em] transition ${activeTab === 'insight' ? 'bg-white text-teal-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
         >
-          <Sparkles className="h-4 w-4" />
-          Ringkasan Insight
+          <Sparkles className="h-4 w-4 shrink-0" />
+          <span className="whitespace-nowrap">Ringkasan Insight</span>
         </button>
         <button
           type="button"
           onClick={() => setActiveTab('warning')}
-          className={`inline-flex flex-1 items-center justify-center gap-2 rounded-lg py-2 text-[13px] font-bold uppercase tracking-[0.03em] transition ${activeTab === 'warning' ? 'bg-white text-teal-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+          className={`inline-flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-lg px-2 py-2 text-sm font-bold uppercase tracking-[0.02em] transition ${activeTab === 'warning' ? 'bg-white text-teal-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
         >
-          <Bell className="h-4 w-4" />
-          Peringatan Dini (Early Warning)
+          <Bell className="h-4 w-4 shrink-0" />
+          <span className="whitespace-nowrap">Peringatan Dini (Early Warning)</span>
         </button>
       </div>
 
@@ -1088,15 +1209,15 @@ function DecisionSupportSection() {
             const Icon = item.icon
             return (
               <div key={item.id} className="flex items-start gap-3 rounded-xl border border-slate-100 bg-slate-50/60 px-3 py-3">
-                <div className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${item.iconBg}`}>
-                  <Icon className={`h-4 w-4 ${item.iconColor}`} />
+                <div className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${item.iconBg}`}>
+                  <Icon className={`h-5 w-5 ${item.iconColor}`} />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs leading-relaxed text-slate-700">
+                  <p className="text-base leading-relaxed text-slate-700">
                     {item.title}
                     {item.highlight ? <span className="font-semibold text-slate-900"> {item.highlight}</span> : null}
                   </p>
-                  <p className="mt-0.5 text-[11px] font-medium text-teal-700">{item.action}</p>
+                  <p className="mt-0.5 text-[15px] font-medium text-teal-700">{item.action}</p>
                 </div>
               </div>
             )
@@ -1107,13 +1228,13 @@ function DecisionSupportSection() {
           {earlyWarnings.map((item) => (
             <div key={item.label} className="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/60 px-3 py-3">
               <div className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: item.color }} />
-              <p className="flex-1 text-xs text-slate-700">{item.label}</p>
-              <span className="rounded-full px-2 py-0.5 text-xs font-bold text-white" style={{ backgroundColor: item.color }}>
+              <p className="flex-1 text-base text-slate-700">{item.label}</p>
+              <span className="rounded-full px-2 py-0.5 text-base font-bold text-white" style={{ backgroundColor: item.color }}>
                 {item.value} Kampus
               </span>
             </div>
           ))}
-          <p className="mt-1 text-[11px] text-slate-400">*Data diperbarui secara berkala berdasarkan laporan masuk.</p>
+          <p className="mt-1 text-[15px] text-slate-400">*Data diperbarui secara berkala berdasarkan laporan masuk.</p>
         </div>
       )}
     </article>
@@ -1128,17 +1249,17 @@ function KampusPrioritasSection() {
     <article className="rounded-2xl border border-[#d5e6e5] bg-white p-5 shadow-sm">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <h2 className="text-lg font-bold uppercase tracking-[0.04em] text-slate-900">Kampus Prioritas Pendampingan</h2>
-          <Info className="h-4 w-4 text-slate-400" />
+          <h2 className="text-[22px] font-bold uppercase tracking-[0.04em] text-slate-900">Kampus Prioritas Pendampingan</h2>
+          <Info className="h-5 w-5 text-slate-400" />
         </div>
         <button type="button" className={outlineActionButtonClass}>
           <Eye className="h-4 w-4" />LIHAT DETAIL
         </button>
       </div>
-      <p className="mt-1 text-xs leading-relaxed text-slate-500">Daftar perguruan tinggi dengan skor rendah yang membutuhkan intervensi segera.</p>
+      <p className="mt-1 text-base leading-relaxed text-slate-500">Daftar perguruan tinggi dengan skor rendah yang membutuhkan intervensi segera.</p>
 
       <div className="mt-3 overflow-hidden rounded-xl border border-slate-100">
-        <table className="w-full text-xs">
+        <table className="w-full text-base">
           <thead>
             <tr className="border-b border-slate-100 bg-slate-50">
               <th className="px-3 py-2.5 text-left font-semibold text-slate-500">Perguruan Tinggi</th>
@@ -1152,19 +1273,19 @@ function KampusPrioritasSection() {
               <tr key={row.no} className={`border-b border-slate-50 transition hover:bg-teal-50/40 ${i % 2 === 0 ? 'bg-white' : 'bg-slate-50/40'}`}>
                 <td className="px-3 py-2.5">
                   <div className="flex items-center gap-2">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-100 text-[10px] font-bold text-slate-500">{row.no}</span>
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 text-sm font-bold text-slate-500">{row.no}</span>
                     <span className="font-medium text-slate-800">{row.name}</span>
                   </div>
                 </td>
                 <td className="px-3 py-2.5 text-center font-bold text-slate-800">{row.skor}</td>
                 <td className="px-3 py-2.5 text-center">
-                  <span className="inline-flex items-center gap-1 rounded-full border border-yellow-200 bg-yellow-50 px-2 py-0.5 text-[10px] font-semibold text-yellow-700">
-                    <Star className="h-2.5 w-2.5 fill-yellow-400 text-yellow-400" />
+                  <span className="inline-flex items-center gap-1 rounded-full border border-yellow-200 bg-yellow-50 px-2 py-0.5 text-sm font-semibold text-yellow-700">
+                    <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
                     {row.kategori}
                   </span>
                 </td>
                 <td className="px-3 py-2.5 text-center">
-                  <span className="inline-block rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-bold text-red-600">
+                  <span className="inline-block rounded-full bg-red-100 px-2 py-0.5 text-sm font-bold text-red-600">
                     {row.prioritas}
                   </span>
                 </td>
@@ -1229,18 +1350,18 @@ function ProyeksiSkorSection() {
   return (
     <article className="rounded-2xl border border-[#d5e6e5] bg-white p-5 shadow-sm">
       <div className="flex items-center gap-2">
-        <h2 className="text-lg font-bold uppercase tracking-[0.04em] text-slate-900">Proyeksi Skor (What-if Analysis)</h2>
-        <Info className="h-4 w-4 text-slate-400" />
+        <h2 className="text-[22px] font-bold uppercase tracking-[0.04em] text-slate-900">Proyeksi Skor (What-if Analysis)</h2>
+        <Info className="h-5 w-5 text-slate-400" />
       </div>
-      <p className="mt-1 text-xs leading-relaxed text-slate-500">Simulasi peningkatan skor jika aspek tertentu ditingkatkan.</p>
+      <p className="mt-1 text-base leading-relaxed text-slate-500">Simulasi peningkatan skor jika aspek tertentu ditingkatkan.</p>
 
       {/* Dropdown */}
       <div className="mt-3">
-        <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Pilih Perguruan Tinggi</label>
+        <label className="text-[15px] font-semibold text-slate-500 uppercase tracking-wide">Pilih Perguruan Tinggi</label>
         <select
           value={selectedIdx}
           onChange={(e) => setSelectedIdx(Number(e.target.value))}
-          className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-400"
+          className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-lg font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-400"
         >
           {proyeksiKampusData.map((k, i) => (
             <option key={k.name} value={i}>{k.name}</option>
@@ -1250,7 +1371,7 @@ function ProyeksiSkorSection() {
 
       {/* Aspects checklist */}
       <div className="mt-3">
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Jika aspek berikut ditingkatkan:</p>
+        <p className="text-[15px] font-semibold uppercase tracking-wide text-slate-500">Jika aspek berikut ditingkatkan:</p>
         <div className="mt-2 space-y-1.5">
           {kampus.aspects.map((a) => (
             <label key={a.key} className="flex cursor-pointer items-center gap-3 rounded-lg px-2 py-1.5 transition hover:bg-slate-50">
@@ -1260,8 +1381,8 @@ function ProyeksiSkorSection() {
                 onChange={() => toggleAspect(a.key)}
                 className="h-4 w-4 rounded border-slate-300 accent-teal-600"
               />
-              <span className="flex-1 text-xs text-slate-700">{a.label}</span>
-              <span className="text-[11px] font-semibold text-teal-600">+{a.gain} poin</span>
+              <span className="flex-1 text-base text-slate-700">{a.label}</span>
+              <span className="text-[15px] font-semibold text-teal-600">+{a.gain} poin</span>
             </label>
           ))}
         </div>
@@ -1308,11 +1429,11 @@ function ProyeksiSkorSection() {
           <text x={cx} y={cy + 10} fontSize="7.5" fill="#64748b" textAnchor="middle">{projectedCat}</text>
         </svg>
 
-        <div className="mt-1 flex items-center gap-3 text-xs">
+        <div className="mt-1 flex items-center gap-3 text-base">
           <div className="text-center">
             <p className="text-slate-400">Skor Saat Ini</p>
             <p className="font-bold text-slate-700">{kampus.skorSaatIni}</p>
-            <span className="mt-0.5 inline-block rounded-full border border-slate-200 bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-600">{currentCat}</span>
+            <span className="mt-0.5 inline-block rounded-full border border-slate-200 bg-slate-100 px-2 py-0.5 text-sm font-semibold text-slate-600">{currentCat}</span>
           </div>
           <div className="h-8 w-px bg-slate-200" />
           <div className="text-center">
@@ -1323,8 +1444,8 @@ function ProyeksiSkorSection() {
       </div>
 
       <div className="mt-3 flex items-center justify-between rounded-xl border border-teal-100 bg-teal-50 px-3 py-2">
-        <p className="text-xs font-semibold text-teal-800">Estimasi Kategori:</p>
-        <span className="flex items-center gap-1 rounded-full bg-teal-600 px-3 py-1 text-xs font-bold text-white">
+        <p className="text-base font-semibold text-teal-800">Estimasi Kategori:</p>
+        <span className="flex items-center gap-1 rounded-full bg-teal-600 px-3 py-1 text-base font-bold text-white">
           <Star className="h-3 w-3 fill-white" />
           {projectedCat}{' -> '}
         </span>
@@ -1336,6 +1457,27 @@ function ProyeksiSkorSection() {
 // ─────────────────────────────────────────────
 // NEW: Combined 3-card row
 // ─────────────────────────────────────────────
+function DecisionSupportSystemIntro() {
+  return (
+    <section className="px-4 pb-5 md:px-6">
+      <div className="relative overflow-hidden rounded-2xl border border-[#bfe3e2] bg-white shadow-sm">
+        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-95" style={{ backgroundImage: "url('/bg header.png')" }} />
+        <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/84 to-white/92" />
+        <div className="relative px-5 py-5 md:px-6">
+          <div className="max-w-5xl">
+            <h2 className="mt-1 text-[28px] font-extrabold uppercase leading-tight tracking-normal text-slate-900">
+              Decision Support System
+            </h2>
+            <p className="mt-2 max-w-4xl text-base leading-relaxed text-slate-600">
+              Ringkasan rekomendasi, kampus prioritas, dan proyeksi skenario untuk menentukan pendampingan yang paling mendesak.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function AnalyticsSection() {
   return (
     <section className="px-4 pb-8 md:px-6">
@@ -1363,6 +1505,7 @@ export default function HomePage() {
         <MetricsSection cards={metricCards} />
         <OverviewSplitSection data={dashboardData} />
         <ScoreSection aspectScores={dashboardData.aspectScores} starDistribution={dashboardData.starDistribution} trend={dashboardData.trend} />
+        <DecisionSupportSystemIntro />
         <AnalyticsSection />
       </div>
     </main>
